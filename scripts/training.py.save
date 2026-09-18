@@ -1,0 +1,14 @@
+import torch
+from pathlib import Path
+import yaml
+import os
+
+
+# Load data configuration
+with open('coco128.yaml', 'r') as f:
+    data_dict = yaml.safe_load(f)
+
+# ... existing code ...
+
+# Training command
+os.system('python yolov5/train.py --img 640 --batch 16 --epochs 200 --data coco128.yaml --weights yolov5s.pt --cache --device 0 --patience

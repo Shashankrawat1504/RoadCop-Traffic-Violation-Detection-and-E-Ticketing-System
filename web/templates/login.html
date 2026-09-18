@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROADCOP - Access Portal</title>
+    <link rel="stylesheet" href="static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="animated-background"></div>
+        <div class="login-content">
+            <div class="login-header">
+                <div class="logo-container">
+                    <div class="logo-circle">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h1>ROADCOP</h1>
+                </div>
+                <p class="login-subtitle"></p>
+            </div>
+            
+            <div class="login-box">
+                <div class="form-header">
+                    <h2>Access Portal</h2>
+                    <p>Enter your credentials to continue</p>
+                </div>
+                
+                <form id="loginForm" method="POST" action="/login">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="name" name="name" required placeholder="Full Name" />
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="input-group">
+                            <i class="fas fa-key"></i>
+                            <input type="text" id="user_id" name="user_id" required placeholder="User ID" />
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="login-btn">
+                        <span>Access System</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </form>
+                
+                <div id="error" class="error"></div>
+                
+                <p class="admin-contact">
+                    <i class="fas fa-info-circle"></i>
+                    Contact administrator for credentials to access the portal
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const user_id = document.getElementById('user_id').value;
+            
+            fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, user_id }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '/dashboard';
+                } else {
+                    document.getElementById('error').textContent = data.error;
+                }
+            })
+            .catch(error => {
+                document.getElementById('error').textContent = 'An error occurred. Please try again.';
+            });
+        });
+    </script>
+</body>
+</html>

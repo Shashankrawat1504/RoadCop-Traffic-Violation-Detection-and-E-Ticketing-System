@@ -1,0 +1,31 @@
+# Python environment
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Secrets
+.env
+.env.*
+
+# Dataset / local database
+data/
+
+# Generated web output
+web/static/output/*
+web/static/uploads/*
+
+# ML model weights
+*.pt
+*.pth
+*.onnx
+*.h5
+*.pkl
+*.pickle
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/

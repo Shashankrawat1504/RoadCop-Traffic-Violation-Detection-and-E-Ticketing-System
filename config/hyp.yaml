@@ -1,0 +1,3 @@
+# Hyperparameters for training
+mosaic: 1.0
+mixup: 0.1
