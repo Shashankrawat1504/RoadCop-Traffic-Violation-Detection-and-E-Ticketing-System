@@ -1,0 +1,43 @@
+# Virtual Environment
+venv/
+.venv/
+
+# Environment Variables
+.env
+.env.*
+
+# Python Cache
+__pycache__/
+*.py[cod]
+
+# VS Code / IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+
+# Dataset / Local Database
+data/
+
+# Generated Web Output
+web/static/output/
+web/static/uploads/
+
+# ML Model Weights
+*.pt
+*.pth
+*.onnx
+*.h5
+*.pkl
+*.pickle
+
+yolov5/runs/
+scripts/*.save

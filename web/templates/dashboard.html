@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ROADCOP Dashboard</title>
+  <link rel="stylesheet" href="static/dashboard.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-content">
+      <div class="loading-spinner">
+        <div class="helmet-spinner">
+          <i class="fas fa-hard-hat"></i>
+        </div>
+        <div class="spinner-text">Processing Video</div>
+      </div>
+      <div class="loading-progress">
+        <div class="progress-bar">
+          <div class="progress-fill"></div>
+        </div>
+        <div class="progress-text">0%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <i class="fas fa-hard-hat"></i>
+      <h1 class="logo">ROADCOP</h1>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#upload" onclick="showSection('upload')" class="nav-link">
+        <i class="fas fa-cloud-upload-alt"></i>
+        <span>Upload Video</span>
+      </a></li>
+      <li><a href="#results" onclick="showSection('results')" class="nav-link">
+        <i class="fas fa-chart-bar"></i>
+        <span>Results</span>
+      </a></li>
+      <li><a href="#about" onclick="showSection('about')" class="nav-link">
+        <i class="fas fa-info-circle"></i>
+        <span>About</span>
+      </a></li>
+      <li>
+        <button id="themeToggle" class="theme-toggle">
+          <i class="fas fa-moon"></i>
+          <span>Dark Mode</span>
+        </button>
+      </li>
+      <li><a href="/logout" class="nav-link logout">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Logout</span>
+      </a></li>
+    </ul>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+    
+    <!-- UPLOAD SECTION (Hero) -->
+    <section id="upload" class="section active">
+      <div class="hero-content">
+        <div class="hero-text">
+          <h2>AI-Powered Traffic Analysis</h2>
+          <p class="hero-subtitle">Upload your traffic video for instant violation detection and analysis</p>
+        </div>
+        <div class="upload-container">
+          <div class="upload-box" id="uploadBox">
+            <div class="upload-icon">
+              <i class="fas fa-hard-hat"></i>
+            </div>
+            <form id="uploadForm">
+              <input type="file" id="videoInput" name="video" accept="video/*" required />
+              <label for="videoInput" class="upload-label">
+                <div class="upload-content">
+                  <span class="browse-text">Choose Video File</span>
+                  <span class="file-text">or drag and drop your video here</span>
+                </div>
+              </label>
+              <div class="file-info" id="fileInfo"></div>
+              <button type="submit" class="process-btn">
+                <i class="fas fa-hard-hat"></i>
+                <span>Process Video</span>
+              </button>
+            </form>
+          </div>
+          <div class="upload-features">
+            <div class="feature-item">
+              <div class="feature-icon">
+                <i class="fas fa-hard-hat"></i>
+              </div>
+              <div class="feature-text">
+                <h4>Helmet Detection</h4>
+                <p>Identifies riders without helmets in real-time</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">
+                <i class="fas fa-users"></i>
+              </div>
+              <div class="feature-text">
+                <h4>Passenger Count</h4>
+                <p>Detects overloaded vehicles automatically</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">
+                <i class="fas fa-id-card"></i>
+              </div>
+              <div class="feature-text">
+                <h4>License Plate Recognition</h4>
+                <p>Extracts and validates license plate information</p>
+              </div>
+            </div>
+          </div>
+          <div id="uploadStatus" class="status-message"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULTS SECTION -->
+    <section id="results" class="section">
+      <div class="section-header">
+        <h2>Detection Results</h2>
+        <p class="section-subtitle">View and download your processed video and violation reports</p>
+      </div>
+      <div class="warning-note">
+        <i class="fas fa-exclamation-triangle"></i>
+        <p><strong>Important Notice:</strong> The detection results may have some margin of error. Factors such as video quality, lighting conditions, camera angle, and object occlusion can affect the accuracy of helmet detection, passenger counting, and license plate recognition. Please verify the results manually for critical applications.</p>
+      </div>
+      <div id="resultsContainer">
+        <div class="results-grid">
+          <div class="result-card video-card">
+            <div class="card-header">
+              <i class="fas fa-video"></i>
+              <h3>Processed Video</h3>
+            </div>
+            <div id="videoResult" class="video-container">
+              <div class="placeholder-content">
+                <i class="fas fa-hard-hat"></i>
+                <p>Processed video will appear here</p>
+              </div>
+            </div>
+          </div>
+          <div class="result-card violations-card">
+            <div class="card-header">
+              <i class="fas fa-exclamation-triangle"></i>
+              <h3>Violations Report</h3>
+            </div>
+            <div id="violationsList" class="violations-container">
+              <div class="placeholder-content">
+                <i class="fas fa-hard-hat"></i>
+                <p>Violation details will appear here</p>
+              </div>
+            </div>
+          </div>
+          <div class="result-card downloads-card">
+            <div class="card-header">
+              <i class="fas fa-download"></i>
+              <h3>Downloads</h3>
+            </div>
+            <div id="downloadLinks" class="downloads-container">
+              <div class="placeholder-content">
+                <i class="fas fa-hard-hat"></i>
+                <p>Download links will appear here</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section id="about" class="section">
+      <div class="section-header">
+        <h2>About ROADCOP</h2>
+        <p class="section-subtitle">Advanced traffic violation detection system powered by artificial intelligence</p>
+      </div>
+      <div class="about-content">
+        <div class="about-text">
+          <p class="description">
+            ROADCOP is designed for traffic enforcement agencies and road safety organizations. 
+            The system helps improve road safety by automating the detection of common traffic violations.
+          </p>
+          <div class="features">
+            <h3>Key Features</h3>
+            <ul class="feature-list">
+              <li>
+                <i class="fas fa-hard-hat"></i>
+                <div class="feature-detail">
+                  <strong>Helmet Detection</strong>
+                  <p>Identifies riders without helmets in real-time</p>
+                </div>
+              </li>
+              <li>
+                <i class="fas fa-users"></i>
+                <div class="feature-detail">
+                  <strong>Passenger Count</strong>
+                  <p>Detects and counts passengers on two-wheelers</p>
+                </div>
+              </li>
+              <li>
+                <i class="fas fa-id-card"></i>
+                <div class="feature-detail">
+                  <strong>License Plate Recognition</strong>
+                  <p>Extracts and validates license plate information</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="how-it-works">
+          <h3>How It Works</h3>
+          <div class="steps">
+            <div class="step">
+              <div class="step-number">1</div>
+              <div class="step-content">
+                <h4>Upload Video</h4>
+                <p>Drag and drop or browse for your traffic video file</p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-number">2</div>
+              <div class="step-content">
+                <h4>AI Processing</h4>
+                <p>Advanced AI analyzes the video frame by frame</p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-number">3</div>
+              <div class="step-content">
+                <h4>Violation Detection</h4>
+                <p>System identifies traffic violations automatically</p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-number">4</div>
+              <div class="step-content">
+                <h4>Results & Reports</h4>
+                <p>View processed video and download violation reports</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <div class="footer-brand">
+          <i class="fas fa-hard-hat"></i>
+          <h4>ROADCOP</h4>
+        </div>
+        <p class="footer-description">
+          Advanced traffic violation detection system powered by artificial intelligence
+        </p>
+      </div>
+      <div class="footer-section">
+        <h4>Quick Links</h4>
+        <ul class="footer-links">
+          <li><a href="#upload" onclick="showSection('upload')">
+            <i class="fas fa-cloud-upload-alt"></i>
+            Upload Video
+          </a></li>
+          <li><a href="#results" onclick="showSection('results')">
+            <i class="fas fa-chart-bar"></i>
+            Results
+          </a></li>
+          <li><a href="#about" onclick="showSection('about')">
+            <i class="fas fa-info-circle"></i>
+            About
+          </a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>Contact</h4>
+        <ul class="contact-info">
+          <li>
+            <i class="fas fa-envelope"></i>
+            <span>info@roadcop.com</span>
+          </li>
+          <li>
+            <i class="fas fa-phone"></i>
+            <span>+1 234 567 8901</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="copyright">
+        &copy; 2026 ROADCOP. All rights reserved.
+      </p>
+    </div>
+  </footer>
+
+  <!-- INLINE JAVASCRIPT -->
+  <script>
+    // Theme switching functionality
+    const themeToggle = document.getElementById('themeToggle');
+    const html = document.documentElement;
+    const icon = themeToggle.querySelector('i');
+    const text = themeToggle.querySelector('span');
+
+    // Check for saved theme preference
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    html.setAttribute('data-theme', savedTheme);
+    updateThemeButton(savedTheme);
+
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = html.getAttribute('data-theme');
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      
+      html.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      updateThemeButton(newTheme);
+    });
+
+    function updateThemeButton(theme) {
+      icon.className = theme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+      text.textContent = theme === 'light' ? 'Dark Mode' : 'Light Mode';
+    }
+
+    // Animate section switching with a fade
+    function showSection(sectionId) {
+      document.querySelectorAll('.section').forEach(section => {
+        section.classList.remove('active');
+      });
+      document.getElementById(sectionId).classList.add('active');
+    }
+
+    // Handle video upload
+    const uploadForm = document.getElementById('uploadForm');
+    const uploadStatus = document.getElementById('uploadStatus');
+    const videoResult = document.getElementById('videoResult');
+    const violationsList = document.getElementById('violationsList');
+    const downloadLinks = document.getElementById('downloadLinks');
+    const fileInfo = document.getElementById('fileInfo');
+    const videoInput = document.getElementById('videoInput');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const progressFill = document.querySelector('.progress-fill');
+    const progressText = document.querySelector('.progress-text');
+    let progress = 0;
+
+    // Reset progress
+    function resetProgress() {
+        progress = 0;
+        progressFill.style.width = '0%';
+        progressText.textContent = '0%';
+    }
+
+    // Update file info when file is selected
+    videoInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const size = (file.size / (1024 * 1024)).toFixed(2);
+            fileInfo.innerHTML = `
+                <div class="file-details">
+                    <i class="fas fa-file-video"></i>
+                    <div class="file-info-text">
+                        <span class="file-name">${file.name}</span>
+                        <span class="file-size">${size} MB</span>
+                    </div>
+                </div>
+            `;
+            fileInfo.style.display = 'block';
+            resetProgress();
+        }
+    });
+
+    uploadForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(uploadForm);
+        
+        // Show loading overlay
+        loadingOverlay.style.display = 'flex';
+        uploadStatus.innerHTML = '';
+        
+        // Simulate progress
+        progress = 0;
+        const progressInterval = setInterval(() => {
+            if (progress < 90) {
+                progress += Math.random() * 10;
+                progressFill.style.width = `${progress}%`;
+                progressText.textContent = `${Math.round(progress)}%`;
+            }
+        }, 500);
+        
+        try {
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.error || 'Server error occurred');
+            }
+
+            // If backend returns async job_id, poll for completion
+            if (data.success && data.job_id) {
+                const jobId = data.job_id;
+                clearInterval(progressInterval);
+                progress = 0;
+                progressFill.style.width = '0%';
+                progressText.textContent = '0%';
+
+                const pollIntervalMs = 500;
+                while (true) {
+                    const statusResp = await fetch(`/upload/status/${jobId}`);
+                    const statusData = await statusResp.json();
+
+                    if (statusData.status === 'error') {
+                        throw new Error(statusData.error || 'Processing failed');
+                    }
+
+                    if (!statusResp.ok) {
+                        throw new Error(statusData.error || 'Server error occurred');
+                    }
+
+                    if (typeof statusData.progress === 'number') {
+                        progress = Math.min(99, Math.max(0, statusData.progress));
+                        progressFill.style.width = `${progress}%`;
+                        progressText.textContent = `${Math.round(progress)}%`;
+                    }
+
+                    if (statusData.status === 'done') {
+                        progressFill.style.width = '100%';
+                        progressText.textContent = '100%';
+                        setTimeout(() => { loadingOverlay.style.display = 'none'; }, 500);
+
+                        renderUploadResult(statusData);
+                        return;
+                    }
+
+                    await new Promise(r => setTimeout(r, pollIntervalMs));
+                }
+            }
+
+            // Fallback: old synchronous response
+            if (data.success) {
+                clearInterval(progressInterval);
+                progressFill.style.width = '100%';
+                progressText.textContent = '100%';
+                setTimeout(() => { loadingOverlay.style.display = 'none'; }, 500);
+                renderUploadResult(data);
+                return;
+            } else {
+                throw new Error(data.error || 'Unknown error occurred');
+            }
+
+        } catch (error) {
+            uploadStatus.innerHTML = `
+                <div class="error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>Error: ${error.message}</span>
+                </div>
+            `;
+            loadingOverlay.style.display = 'none';
+            clearInterval(progressInterval);
+        }
+    });
+
+    function renderUploadResult(data) {
+                uploadStatus.innerHTML = `
+                    <div class="success">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Video processed successfully!</span>
+                    </div>
+                `;
+                
+                // Display processed video
+                if (data.output_video) {
+                    videoResult.innerHTML = `
+                        <div class="video-wrapper">
+                            <video controls width="100%">
+                                <source src="${data.output_video}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                    `;
+                } else {
+                    videoResult.innerHTML = `
+                        <div class="error">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span>Error: Processed video not available</span>
+                        </div>
+                    `;
+                }
+                
+                // Display violations
+                if (data.violations && data.violations.length > 0) {
+                    violationsList.innerHTML = `
+                        <ul class="violations-list">
+                            ${data.violations.map(violation => `
+                                <li class="violation-item">
+                                    <div class="violation-icon">
+                                        ${violation.violation_type === 'No Helmet' ? 
+                                            '<i class="fas fa-hard-hat"></i>' : 
+                                            '<i class="fas fa-users"></i>'}
+                                    </div>
+                                    <div class="violation-details">
+                                        <strong>${violation.violation_type}</strong>
+                                        ${violation.vehicle_number ? `<div class="vehicle-number">Plate: ${violation.vehicle_number}</div>` : ''}
+                                        ${violation.passenger_count ? `<div class="passenger-count">Passengers: ${violation.passenger_count}</div>` : ''}
+                                        <div class="fine-amount">Fine: INR ${violation.fine != null ? violation.fine : 1000}</div>
+                                        <div class="timestamp">Time: ${violation.timestamp}</div>
+                                        ${violation.ticket_pdf ? `<a class="ticket-link" href="${violation.ticket_pdf}" target="_blank" rel="noopener"><i class="fas fa-file-pdf"></i> E-Ticket (PDF)</a>` : ''}
+                                    </div>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    `;
+                } else {
+                    violationsList.innerHTML = '<p class="no-violations">No violations detected.</p>';
+                }
+                
+                // Display download links (video + e-ticket PDFs listed above per violation)
+                if (data.output_video) {
+                    downloadLinks.innerHTML = `
+                        <div class="download-buttons">
+                            <a href="${data.output_video}" download class="download-btn">
+                                <i class="fas fa-download"></i>
+                                <span>Download Processed Video</span>
+                            </a>
+                            ${data.violations && data.violations.length ? `
+                                <p class="download-hint"><i class="fas fa-info-circle"></i> E-ticket PDFs are linked under each violation.</p>
+                            ` : ''}
+                        </div>
+                    `;
+                } else {
+                    downloadLinks.innerHTML = `
+                        <div class="error">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span>Error: Download files not available</span>
+                        </div>
+                    `;
+                }
+                
+                // Show results section
+                showSection('results');
+    }
+
+    // Drag-and-drop functionality
+    const uploadBox = document.getElementById('uploadBox');
+    uploadBox.addEventListener('dragenter', () => {
+      uploadBox.classList.add('drag-over');
+    });
+    uploadBox.addEventListener('dragleave', () => {
+      uploadBox.classList.remove('drag-over');
+    });
+    uploadBox.addEventListener('dragover', (e) => {
+      e.preventDefault();
+    });
+    uploadBox.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadBox.classList.remove('drag-over');
+      const droppedFiles = e.dataTransfer.files;
+      if (droppedFiles.length > 0) {
+        document.getElementById('videoInput').files = droppedFiles;
+        const file = droppedFiles[0];
+        const size = (file.size / (1024 * 1024)).toFixed(2);
+        fileInfo.innerHTML = `
+          <div class="file-details">
+            <i class="fas fa-file-video"></i>
+            <div class="file-info-text">
+              <span class="file-name">${file.name}</span>
+              <span class="file-size">${size} MB</span>
+            </div>
+          </div>
+        `;
+        fileInfo.style.display = 'block';
+        uploadForm.dispatchEvent(new Event('submit'));
+      }
+    });
+  </script>
+</body>
+</html>
